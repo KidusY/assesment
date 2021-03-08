@@ -23,26 +23,23 @@ class App extends React.Component {
 
   fetchData = async () => {
     let response = await axios.get(url)
-    //console.log(response.data);
+   
     response.data.students.map((student) => student.tags = [])
     this.setState({ data: response.data.students })
 
   }
 
   addTag = (email, tag) => {
-
-    let studentInfo = this.state.data.find((info) => info.email === email)
     let newData = [...this.state.data]
-    studentInfo.tags = [...studentInfo.tags, tag]
-    newData = [...newData, studentInfo]
-
+    console.log(newData);
+   newData.filter((info) => info.email === email).map(studentInfo => studentInfo.tags = [...studentInfo.tags, tag]) 
     this.setState({ data: newData })
   }
 
 
 
   render() {
-    console.log(this.state.inputTag)
+   
     return (
       <div className="App">
         <div className="container">
@@ -55,7 +52,30 @@ class App extends React.Component {
           </div>
           {
             this.state.data ?
-              <div> {console.log(this.state.inputTag)} {this.state.data.filter((student) => student.tags.includes(this.state.inputTag) || student.firstName.toLowerCase().includes(this.state.input) || student.lastName.toLowerCase().includes(this.state.input) || this.state.inputTag === '' || this.state.input==="").map((student, i) => <StudentCard key={i} {...student} addTag={this.addTag} />)} </div>
+              <div> {this.state.data.filter((student) => {
+                if (this.state.inputTag !== '' && this.state.input === '' && student.tags.includes(this.state.inputTag)){
+                 console.log("1")
+                  return student
+                }
+                else if (this.state.input !== '' && this.state.inputTag === '' && (student.firstName.toLowerCase().includes(this.state.input) || student.lastName.toLowerCase().includes(this.state.input)))
+                {
+                  console.log("2")
+                  return student;
+                }
+                else if (this.state.input === '' && this.state.inputTag === ''){
+                  console.log("3")
+                  return student
+                }
+                else if ((this.state.input !== '' && this.state.inputTag !== '')){
+                  console.log("4")
+                  if ((student.firstName.toLowerCase().includes(this.state.input) || student.lastName.toLowerCase().includes(this.state.input)) && student.tags.includes(this.state.inputTag) ){
+                    console.log("5")
+                  return student
+                  }
+                }
+                
+
+                }).map((student, i) => <StudentCard key={i} {...student} addTag={this.addTag} />)} </div>
               : <div />
           }
 
